@@ -1,7 +1,6 @@
 package com.andyhsu.springbootmall.dao;
 
 import com.andyhsu.springbootmall.model.Product;
-import org.springframework.stereotype.Component;
 
 
 public interface ProductDao {
@@ -10,5 +9,5 @@ public interface ProductDao {
      * @param productId
      * @return
      */
-    public Product getProcuctById(Integer productId);
+    Product getProcuctById(Integer productId);
 }
