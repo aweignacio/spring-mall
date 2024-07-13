@@ -24,4 +24,10 @@ public interface ProductService {
      * @param productRequest 前端請求中要修改商品的數據
      */
     void updateProduct(Integer productId,ProductRequest productRequest);
+
+    /**
+     * 刪除商品的功能
+     * @param producetId  要刪除的商品ID
+     */
+    void deleteProductById(Integer producetId);
 }

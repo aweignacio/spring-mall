@@ -75,4 +75,12 @@ public class ProductDaoImpl implements ProductDao {
         map.put("lastModifiedDate",now);
         namedParameterJdbcTemplate.update(sql,map);
     }
+
+    @Override
+    public void deleteProductById(Integer producetId) {
+        Map<String,Object> map = new HashMap<>();
+        String sql = "delete from product where  product_id = :productId";
+        map.put("productId",producetId);
+        namedParameterJdbcTemplate.update(sql,map);
+    }
 }
