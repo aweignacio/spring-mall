@@ -55,5 +55,24 @@ public class ProductDaoImpl implements ProductDao {
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map),keyHolder);
         int productId = keyHolder.getKey().intValue();
         return productId;
+
+    }
+
+    @Override
+    public void updateProduct(Integer productId, ProductRequest productRequest) {
+        Map<String,Object> map = new HashMap<>();
+        String sql = "update product set product_name = :productName,category = :category,image_url = :imageUrl," +
+                " price = :price, stock = :stock , description = :description, last_modified_date = :lastModifiedDate where product_id = :productId";
+
+        map.put("productId",productId);
+        map.put("productName",productRequest.getProductName());
+        map.put("category",productRequest.getCategory().name()); //再次提醒需要將enum類用name方法轉為字符串
+        map.put("imageUrl",productRequest.getImageUrl());
+        map.put("price",productRequest.getPrice());
+        map.put("stock",productRequest.getStock());
+        map.put("description",productRequest.getDescription());
+        Date now = new Date();
+        map.put("lastModifiedDate",now);
+        namedParameterJdbcTemplate.update(sql,map);
     }
 }

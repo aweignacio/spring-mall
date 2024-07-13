@@ -27,10 +27,25 @@ public class ProductController {
     @PostMapping("/products")
     public ResponseEntity<Product> creatProduct(@RequestBody
                                                 @Valid ProductRequest productRequest) {
-       //因dao層的createProduct方法會返回一個 新增完商品的ID，所以用integer來接住
+        //因dao層的createProduct方法會返回一個 新增完商品的ID，所以用integer來接住
         Integer productId = productService.creatProduct(productRequest);
         //再利用這個productId，使用getProductId方法來獲得商品數據
-       Product product = productService.getProcuctById(productId);
+        Product product = productService.getProcuctById(productId);
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+                                                 @RequestBody @Valid ProductRequest productRequest) {
+       //檢查product是否存在
+        Product product = productService.getProcuctById(productId);
+        if(product == null){
+             return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        //修改商品的數據
+        productService.updateProduct(productId,productRequest);
+        Product updateProduct = productService.getProcuctById(productId);
+        return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
+    }
 }
+

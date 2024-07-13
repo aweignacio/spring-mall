@@ -18,5 +18,10 @@ public interface ProductService {
      */
     Integer creatProduct(ProductRequest productRequest);
 
-
+    /**
+     * 修改商品數據的功能
+     * @param productId 要修改商品的ID
+     * @param productRequest 前端請求中要修改商品的數據
+     */
+    void updateProduct(Integer productId,ProductRequest productRequest);
 }

@@ -7,6 +7,9 @@ import com.andyhsu.springbootmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 public class ProductServiceImpl implements ProductService {
     @Autowired
@@ -21,5 +24,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Integer creatProduct(ProductRequest productRequest) {
         return productDao.creatProduct(productRequest);
+    }
+
+    @Override
+    public void updateProduct(Integer productId, ProductRequest productRequest) {
+       productDao.updateProduct(productId,productRequest);
     }
 }
