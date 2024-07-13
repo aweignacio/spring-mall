@@ -1,7 +1,8 @@
 package com.andyhsu.springbootmall.dto;
 
 import com.andyhsu.springbootmall.constant.ProductCategory;
-import jakarta.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
+
 
 public class ProductRequest {
     @NotNull
