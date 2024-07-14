@@ -1,16 +1,14 @@
 package com.andyhsu.springbootmall.service.impl;
 
-import com.andyhsu.springbootmall.constant.ProductCategory;
 import com.andyhsu.springbootmall.dao.ProductDao;
+import com.andyhsu.springbootmall.dto.ProductQueryParam;
 import com.andyhsu.springbootmall.dto.ProductRequest;
 import com.andyhsu.springbootmall.model.Product;
 import com.andyhsu.springbootmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class ProductServiceImpl implements ProductService {
@@ -18,8 +16,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
 
     @Override
-    public List<Product> getProducts(ProductCategory category,String search) {
-        return productDao.getProducts(category,search);
+    public List<Product> getProducts(ProductQueryParam productQueryParam) {
+        return productDao.getProducts(productQueryParam);
     }
 
     @Override

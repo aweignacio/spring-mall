@@ -1,6 +1,6 @@
 package com.andyhsu.springbootmall.dao;
 
-import com.andyhsu.springbootmall.constant.ProductCategory;
+import com.andyhsu.springbootmall.dto.ProductQueryParam;
 import com.andyhsu.springbootmall.dto.ProductRequest;
 import com.andyhsu.springbootmall.model.Product;
 
@@ -11,7 +11,7 @@ public interface ProductDao {
     /**
      * 查詢商品列表功能(all)
      */
-    List<Product> getProducts(ProductCategory productCategory,String search);
+    List<Product> getProducts(ProductQueryParam productQueryParam);
     /**
      * 藉由商品ID查詢商品的功能
      * @param productId 要查詢的商品ID

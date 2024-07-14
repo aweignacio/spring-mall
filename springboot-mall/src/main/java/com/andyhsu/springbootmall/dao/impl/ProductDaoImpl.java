@@ -1,7 +1,7 @@
 package com.andyhsu.springbootmall.dao.impl;
 
-import com.andyhsu.springbootmall.constant.ProductCategory;
 import com.andyhsu.springbootmall.dao.ProductDao;
+import com.andyhsu.springbootmall.dto.ProductQueryParam;
 import com.andyhsu.springbootmall.dto.ProductRequest;
 import com.andyhsu.springbootmall.model.Product;
 import com.andyhsu.springbootmall.rowmapper.ProductRowMapper;
@@ -24,20 +24,20 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts(ProductCategory category, String search) {
+    public List<Product> getProducts(ProductQueryParam productQueryParam) {
         Map<String, Object> map = new HashMap<>();
         String sql = "SELECT product_id,product_name,category,image_url,price,stock,description," +
                 "created_date,last_modified_date FROM product WHERE 1=1";
 
-        if (category != null) {
+        if (productQueryParam.getCategory() != null) {
             sql = sql + " AND category = :category";
             //第N次提醒，enum類型要轉成字符串要使用name()方法
-            map.put("category", category.name());
+            map.put("category", productQueryParam.getCategory().name());
         }
-        if (search != null) {
+        if (productQueryParam.getSearch() != null) {
             //雖然拼接起來語法是對的，但是不能這樣寫，要將%放在map裡面的佔位符參數寫
             sql = sql + " AND product_name LIKE :search";
-            map.put("search", "%" + search + "%");
+            map.put("search", "%" + productQueryParam.getSearch() + "%");
         }
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
