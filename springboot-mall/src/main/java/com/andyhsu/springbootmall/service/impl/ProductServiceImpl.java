@@ -8,12 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductDao productDao;
+
+    @Override
+    public List<Product> getProducts() {
+        return productDao.getProducts();
+    }
 
     @Override
     public Product getProcuctById(Integer productId) {
@@ -28,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void updateProduct(Integer productId, ProductRequest productRequest) {
-       productDao.updateProduct(productId,productRequest);
+        productDao.updateProduct(productId, productRequest);
     }
 
     @Override

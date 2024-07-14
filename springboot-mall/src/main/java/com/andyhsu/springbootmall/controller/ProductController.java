@@ -9,10 +9,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ProductController {
     @Autowired
     private ProductService productService;
+
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts() {
+        //查詢商品回傳的是List。
+        List<Product> productList = productService.getProducts();
+        //當前端請求/products就會消耗資源，不管getProducts是否查詢到/products這個資源都是存在的。
+        //反之，查詢特定ID商品，/products/{productId}，可能會因為是null而沒有這個資源
+        return ResponseEntity.status(HttpStatus.OK).body(productList);
+    }
 
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId) {
@@ -37,23 +48,25 @@ public class ProductController {
     @PutMapping("/products/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
                                                  @RequestBody @Valid ProductRequest productRequest) {
-       //檢查product是否存在
+        //檢查product是否存在
         Product product = productService.getProcuctById(productId);
-        if(product == null){
-             return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         //修改商品的數據
-        productService.updateProduct(productId,productRequest);
+        productService.updateProduct(productId, productRequest);
         Product updateProduct = productService.getProcuctById(productId);
         return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
     }
 
     @DeleteMapping("/products/{productId}")
-    public  ResponseEntity<Product> deleteProduct(@PathVariable Integer productId){
+    public ResponseEntity<Product> deleteProduct(@PathVariable Integer productId) {
         productService.deleteProductById(productId);
 
         //商品確定消失不見回傳204，NO_CONTENT給前端
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+
 }
 
