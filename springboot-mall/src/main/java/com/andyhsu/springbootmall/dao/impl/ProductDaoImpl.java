@@ -1,5 +1,6 @@
 package com.andyhsu.springbootmall.dao.impl;
 
+import com.andyhsu.springbootmall.constant.ProductCategory;
 import com.andyhsu.springbootmall.dao.ProductDao;
 import com.andyhsu.springbootmall.dto.ProductRequest;
 import com.andyhsu.springbootmall.model.Product;
@@ -23,10 +24,21 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts() {
-        Map<String,Object> map = new HashMap<>();
+    public List<Product> getProducts(ProductCategory category, String search) {
+        Map<String, Object> map = new HashMap<>();
         String sql = "SELECT product_id,product_name,category,image_url,price,stock,description," +
-                "created_date,last_modified_date FROM product";
+                "created_date,last_modified_date FROM product WHERE 1=1";
+
+        if (category != null) {
+            sql = sql + " AND category = :category";
+            //第N次提醒，enum類型要轉成字符串要使用name()方法
+            map.put("category", category.name());
+        }
+        if (search != null) {
+            //雖然拼接起來語法是對的，但是不能這樣寫，要將%放在map裡面的佔位符參數寫
+            sql = sql + " AND product_name LIKE :search";
+            map.put("search", "%" + search + "%");
+        }
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
         return productList;
@@ -47,22 +59,22 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Integer creatProduct(ProductRequest productRequest) {
-        Map<String,Object> map = new HashMap<>();
-        String sql ="INSERT INTO product (product_name, category, image_url, price, stock, description, created_date, last_modified_date) VALUES\n" +
+        Map<String, Object> map = new HashMap<>();
+        String sql = "INSERT INTO product (product_name, category, image_url, price, stock, description, created_date, last_modified_date) VALUES\n" +
                 "                    (:productName,:category,:imageUrl,:price,:stock,:description,:createdDate,:lastModifiedDate)\n";
 
-        map.put("productName",productRequest.getProductName());
-        map.put("category",productRequest.getCategory().name());//注意:enum要將取得的類型轉為字符串
-        map.put("imageUrl",productRequest.getImageUrl());
-        map.put("price",productRequest.getPrice());
-        map.put("stock",productRequest.getStock());
-        map.put("description",productRequest.getDescription());
+        map.put("productName", productRequest.getProductName());
+        map.put("category", productRequest.getCategory().name());//注意:enum要將取得的類型轉為字符串
+        map.put("imageUrl", productRequest.getImageUrl());
+        map.put("price", productRequest.getPrice());
+        map.put("stock", productRequest.getStock());
+        map.put("description", productRequest.getDescription());
         Date now = new Date();
-        map.put("createdDate",now);
-        map.put("lastModifiedDate",now);
+        map.put("createdDate", now);
+        map.put("lastModifiedDate", now);
         //keyholder可以獲取自動生成的流水編號ID
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map),keyHolder);
+        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
         int productId = keyHolder.getKey().intValue();
         return productId;
 
@@ -70,27 +82,27 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void updateProduct(Integer productId, ProductRequest productRequest) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         String sql = "update product set product_name = :productName,category = :category,image_url = :imageUrl," +
                 " price = :price, stock = :stock , description = :description, last_modified_date = :lastModifiedDate where product_id = :productId";
 
-        map.put("productId",productId);
-        map.put("productName",productRequest.getProductName());
-        map.put("category",productRequest.getCategory().name()); //再次提醒需要將enum類用name方法轉為字符串
-        map.put("imageUrl",productRequest.getImageUrl());
-        map.put("price",productRequest.getPrice());
-        map.put("stock",productRequest.getStock());
-        map.put("description",productRequest.getDescription());
+        map.put("productId", productId);
+        map.put("productName", productRequest.getProductName());
+        map.put("category", productRequest.getCategory().name()); //再次提醒需要將enum類用name方法轉為字符串
+        map.put("imageUrl", productRequest.getImageUrl());
+        map.put("price", productRequest.getPrice());
+        map.put("stock", productRequest.getStock());
+        map.put("description", productRequest.getDescription());
         Date now = new Date();
-        map.put("lastModifiedDate",now);
-        namedParameterJdbcTemplate.update(sql,map);
+        map.put("lastModifiedDate", now);
+        namedParameterJdbcTemplate.update(sql, map);
     }
 
     @Override
     public void deleteProductById(Integer producetId) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         String sql = "delete from product where  product_id = :productId";
-        map.put("productId",producetId);
-        namedParameterJdbcTemplate.update(sql,map);
+        map.put("productId", producetId);
+        namedParameterJdbcTemplate.update(sql, map);
     }
 }

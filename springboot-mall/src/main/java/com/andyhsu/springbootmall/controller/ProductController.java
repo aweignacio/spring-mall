@@ -1,5 +1,6 @@
 package com.andyhsu.springbootmall.controller;
 
+import com.andyhsu.springbootmall.constant.ProductCategory;
 import com.andyhsu.springbootmall.dto.ProductRequest;
 import com.andyhsu.springbootmall.model.Product;
 import com.andyhsu.springbootmall.service.ProductService;
@@ -17,9 +18,11 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts() {
+    public ResponseEntity<List<Product>> getProducts(
+            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) String search) {
         //查詢商品回傳的是List。
-        List<Product> productList = productService.getProducts();
+        List<Product> productList = productService.getProducts(category,search);
         //當前端請求/products就會消耗資源，不管getProducts是否查詢到/products這個資源都是存在的。
         //反之，查詢特定ID商品，/products/{productId}，可能會因為是null而沒有這個資源
         return ResponseEntity.status(HttpStatus.OK).body(productList);
