@@ -35,10 +35,12 @@ public class ProductDaoImpl implements ProductDao {
             map.put("category", productQueryParam.getCategory().name());
         }
         if (productQueryParam.getSearch() != null) {
-            //雖然拼接起來語法是對的，但是不能這樣寫，要將%放在map裡面的佔位符參數寫
+            //雖然拼接起來語法是對的，但是不能在sql語法中拼接，要將%放在map裡面的佔位符參數寫
             sql = sql + " AND product_name LIKE :search";
             map.put("search", "%" + productQueryParam.getSearch() + "%");
         }
+        //不用null判斷是因為orderBy、sort本身就有預設值，所以不會有null的例外發生
+        sql = sql + " ORDER BY " + productQueryParam.getOrderBy() + " " + productQueryParam.getSort();
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
         return productList;

@@ -21,10 +21,14 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getProducts(
             @RequestParam(required = false) ProductCategory category,
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "created_date") String orderBy,
+            @RequestParam(defaultValue = "desc") String sort) {
         ProductQueryParam productQueryParam = new ProductQueryParam();
         productQueryParam.setCategory(category);
         productQueryParam.setSearch(search);
+        productQueryParam.setOrderBy(orderBy);
+        productQueryParam.setSort(sort);
         //查詢商品回傳的是List。
         List<Product> productList = productService.getProducts(productQueryParam);
         //當前端請求/products就會消耗資源，不管getProducts是否查詢到/products這個資源都是存在的。
