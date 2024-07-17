@@ -6,6 +6,8 @@ import com.andyhsu.springbootmall.dto.ProductRequest;
 import com.andyhsu.springbootmall.model.Product;
 import com.andyhsu.springbootmall.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +16,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Valid
 public class ProductController {
     @Autowired
     private ProductService productService;
 
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getProducts(
+            //查詢條件 Filtering
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
+            //排序 Sorting
             @RequestParam(defaultValue = "created_date") String orderBy,
-            @RequestParam(defaultValue = "desc") String sort) {
+            @RequestParam(defaultValue = "desc") String sort,
+            //分頁 Pagination
+            //limit、offset對應到的就是sql中的limit、offset用法
+            //limit  > 最多只取得幾筆數據
+            //offset > 從查詢到的數據中，跳過幾筆
+            //使用@max、@min限制可以取得的最大值和最小值，避免資料庫效能不足
+            @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
+            @RequestParam(defaultValue = "0") @Min(0) Integer offset
+    ) {
         ProductQueryParam productQueryParam = new ProductQueryParam();
         productQueryParam.setCategory(category);
         productQueryParam.setSearch(search);
         productQueryParam.setOrderBy(orderBy);
         productQueryParam.setSort(sort);
+        productQueryParam.setLimit(limit);
+        productQueryParam.setOffset(offset);
         //查詢商品回傳的是List。
         List<Product> productList = productService.getProducts(productQueryParam);
         //當前端請求/products就會消耗資源，不管getProducts是否查詢到/products這個資源都是存在的。

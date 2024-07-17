@@ -28,7 +28,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
         String sql = "SELECT product_id,product_name,category,image_url,price,stock,description," +
                 "created_date,last_modified_date FROM product WHERE 1=1";
-
+        //查詢條件
         if (productQueryParam.getCategory() != null) {
             sql = sql + " AND category = :category";
             //第N次提醒，enum類型要轉成字符串要使用name()方法
@@ -39,9 +39,18 @@ public class ProductDaoImpl implements ProductDao {
             sql = sql + " AND product_name LIKE :search";
             map.put("search", "%" + productQueryParam.getSearch() + "%");
         }
+        //排序
         //不用null判斷是因為orderBy、sort本身就有預設值，所以不會有null的例外發生
         sql = sql + " ORDER BY " + productQueryParam.getOrderBy() + " " + productQueryParam.getSort();
+
+        //分頁， limit和offset的語法是在orderBy之後，所以這裡也必須放在排序的功能之後
+        //提醒：limit和offset 後直接接數值 不用等號
+        sql = sql + " limit  :limit  offset  :offset ";
+        map.put("limit",productQueryParam.getLimit());
+        map.put("offset",productQueryParam.getOffset());
+
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
+
 
         return productList;
     }
