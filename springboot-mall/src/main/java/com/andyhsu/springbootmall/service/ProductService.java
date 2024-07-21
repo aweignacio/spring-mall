@@ -19,6 +19,12 @@ public interface ProductService {
     Product getProcuctById(Integer productId);
 
     /**
+     * 查詢商品總筆數的功能
+     * @param productQueryParam 該次的查詢條件
+     * @return 該次查詢條件下所查詢到的總筆數
+     */
+    Integer countProduct(ProductQueryParam productQueryParam);
+    /**
      *新增商品的功能
      * @param productRequest 要新增的商品資歷
      * @return 返回一個productId，代表新增的商品Id

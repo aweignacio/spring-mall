@@ -46,13 +46,34 @@ public class ProductDaoImpl implements ProductDao {
         //分頁， limit和offset的語法是在orderBy之後，所以這裡也必須放在排序的功能之後
         //提醒：limit和offset 後直接接數值 不用等號
         sql = sql + " limit  :limit  offset  :offset ";
-        map.put("limit",productQueryParam.getLimit());
-        map.put("offset",productQueryParam.getOffset());
+        map.put("limit", productQueryParam.getLimit());
+        map.put("offset", productQueryParam.getOffset());
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
 
         return productList;
+    }
+
+    @Override
+    public Integer countProduct(ProductQueryParam productQueryParam) {
+        Map<String, Object> map = new HashMap<>();
+        String sql = "SELECT count(*) FROM product WHERE 1=1";
+        //因為要查詢該次查詢的商品總筆數，也需要加入查詢條件的判斷
+        //查詢條件
+        if (productQueryParam.getCategory() != null) {
+            sql = sql + " AND category = :category";
+            //第N次提醒，enum類型要轉成字符串要使用name()方法
+            map.put("category", productQueryParam.getCategory().name());
+        }
+        if (productQueryParam.getSearch() != null) {
+            //雖然拼接起來語法是對的，但是不能在sql語法中拼接，要將%放在map裡面的佔位符參數寫
+            sql = sql + " AND product_name LIKE :search";
+            map.put("search", "%" + productQueryParam.getSearch() + "%");
+        }
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+        return total;
+
     }
 
     @Override
