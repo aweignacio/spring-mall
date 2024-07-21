@@ -45,4 +45,13 @@ public class UserDaoImpl implements UserDao {
         List<User> userList = namedParameterJdbcTemplate.query(sql, map, new UserRowMapper());
         return userList.isEmpty() ? null : userList.get(0);
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+        Map<String,Object> map = new HashMap<>();
+        String sql = "SELECT user_id,email,password,created_date,last_modified_date FROM user WHERE email = :email";
+        map.put("email",email);
+        List<User> userList = namedParameterJdbcTemplate.query(sql, map, new UserRowMapper());
+        return userList.isEmpty() ? null : userList.get(0);
+    }
 }

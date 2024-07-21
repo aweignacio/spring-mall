@@ -17,4 +17,11 @@ public interface UserDao {
      * @return 返回該會員ID的資料
      */
     User getUserByUserId(Integer userId);
+
+    /**
+     * 藉由email查詢該筆會員資料的方法
+     * @param email 要查詢的會員的email
+     * @return  該會員的資料
+     */
+    User getUserByEmail(String email);
 }
