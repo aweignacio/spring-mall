@@ -1,5 +1,6 @@
 package com.andyhsu.springbootmall.service;
 
+import com.andyhsu.springbootmall.dto.UserLoginRequest;
 import com.andyhsu.springbootmall.dto.UserRegisterRequest;
 import com.andyhsu.springbootmall.model.User;
 
@@ -18,4 +19,11 @@ public interface UserService {
      * @return 返回該會員ID的資料
      */
     User getUserByUserId(Integer userId);
+
+    /**
+     * 登入功能
+     * @param userLoginRequest 登入的帳號密碼
+     * @return 登入的會員資訊
+     */
+    User login(UserLoginRequest userLoginRequest);
 }

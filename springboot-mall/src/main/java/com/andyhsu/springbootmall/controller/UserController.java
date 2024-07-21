@@ -1,5 +1,6 @@
 package com.andyhsu.springbootmall.controller;
 
+import com.andyhsu.springbootmall.dto.UserLoginRequest;
 import com.andyhsu.springbootmall.dto.UserRegisterRequest;
 import com.andyhsu.springbootmall.model.User;
 import com.andyhsu.springbootmall.service.UserService;
@@ -23,6 +24,14 @@ public class UserController {
         User user = userService.getUserByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+
+    }
+
+    @PostMapping("/users/login")
+    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+        User user= userService.login(userLoginRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
 
     }
 }
