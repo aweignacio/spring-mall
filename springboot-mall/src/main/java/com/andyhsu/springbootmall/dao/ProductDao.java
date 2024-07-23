@@ -42,4 +42,11 @@ public interface ProductDao {
      * @param producetId  要刪除的商品ID
      */
     void deleteProductById(Integer producetId);
+
+    /**
+     * 更新商品庫存的方法
+     * @param productId 要更新的商品ID
+     * @param stock 庫存量
+     */
+    void updateStock(Integer productId, Integer stock);
 }

@@ -137,4 +137,16 @@ public class ProductDaoImpl implements ProductDao {
         map.put("productId", producetId);
         namedParameterJdbcTemplate.update(sql, map);
     }
+
+    @Override
+    public void updateStock(Integer productId, Integer stock) {
+        Map<String, Object> map = new HashMap<>();
+        String sql = "UPDATE product SET stock = :stock ,product.last_modified_date = :lastModifiedDate " +
+                "WHERE product_id = :productId;\n";
+
+        map.put("stock", stock);
+        map.put("lastModifiedDate", new Date());
+        map.put("productId", productId);
+        namedParameterJdbcTemplate.update(sql,map);
+    }
 }
