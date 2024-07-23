@@ -1,7 +1,10 @@
 package com.andyhsu.springbootmall.dao.impl;
 
 import com.andyhsu.springbootmall.dao.OrderDao;
+import com.andyhsu.springbootmall.model.Order;
 import com.andyhsu.springbootmall.model.OrderItem;
+import com.andyhsu.springbootmall.rowmapper.OrderItemRowMapper;
+import com.andyhsu.springbootmall.rowmapper.OrderRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,6 +21,29 @@ import java.util.Map;
 public class OrderDaoImpl implements OrderDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Override
+    public List<OrderItem> getOrderItemsByOrderId(Integer orderId) {
+        Map<String, Object> map = new HashMap<>();
+        String sql = "SELECT oi.order_item_id,oi.order_id,oi.product_id,oi.amount,oi.quantity,p.product_name,p.image_url\n" +
+                "FROM order_item oi\n" +
+                "LEFT JOIN product p\n" +
+                "ON oi.product_id = p.product_id\n" +
+                "WHERE oi.order_id = :orderId";
+        map.put("orderId", orderId);
+        //只要有join多張table，多出來的欄位也要新增在rowMapper
+        List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql, map, new OrderItemRowMapper());
+        return orderItemList;
+    }
+
+    @Override
+    public Order getOrderByOrderId(Integer orderId) {
+        Map<String, Object> map = new HashMap<>();
+        String sql = "SELECT order_id,user_id,total_amount,created_date,last_modified_date FROM `order` WHERE order_id = :orderId";
+        map.put("orderId", orderId);
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+        return orderList.isEmpty() ? null : orderList.get(0);
+    }
 
     @Override
     public Integer createOrder(Integer userId, Integer totalAmount) {

@@ -4,6 +4,7 @@ import com.andyhsu.springbootmall.dao.OrderDao;
 import com.andyhsu.springbootmall.dao.ProductDao;
 import com.andyhsu.springbootmall.dto.BuyItem;
 import com.andyhsu.springbootmall.dto.CreateOrderRequest;
+import com.andyhsu.springbootmall.model.Order;
 import com.andyhsu.springbootmall.model.OrderItem;
 import com.andyhsu.springbootmall.model.Product;
 import com.andyhsu.springbootmall.service.OrderService;
@@ -20,6 +21,18 @@ public class OrderServiceImpl implements OrderService {
     private OrderDao orderDao;
     @Autowired
     private ProductDao productDao;
+
+    @Override
+    public Order getOrderByOrderId(Integer orderId) {
+        //先調用getOrderByOrderId，取得訂單總資訊
+        Order order = orderDao.getOrderByOrderId(orderId);
+        //再調用getOrderItemsByOrderId取得訂單明細
+        List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(orderId);
+        //因一整個order訂單會包含orderList，所以要在order中擴充orderList
+        order.setOrderItemList(orderItemList);
+        return order;
+
+    }
 
     @Transactional //只要有修改更新多個資料庫"一定一定一定"要使用Transactional註解
     @Override
@@ -48,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
         //創建訂單
         Integer orderId = orderDao.createOrder(userId, totalAmount);
         //創建訂單明細
-        orderDao.createOrderItems(orderId,orderItemList);
+        orderDao.createOrderItems(orderId, orderItemList);
         return orderId;
     }
 }
