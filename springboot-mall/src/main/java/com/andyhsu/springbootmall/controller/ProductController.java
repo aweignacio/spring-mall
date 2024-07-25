@@ -82,7 +82,7 @@ public class ProductController {
         List<Product> productList = productService.getProducts(productQueryParam);
         //取得Product總數
         Integer total =productService.countProduct(productQueryParam);
-        //分頁
+        //要返回給前端的分頁訊息
         Page<Product> page = new Page<>();
         page.setLimit(limit);
         page.setOffset(offset);
@@ -96,9 +96,9 @@ public class ProductController {
 
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId) {
-        Product procuct = productService.getProcuctById(productId);
-        if (procuct != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(procuct);
+        Product product = productService.getProcuctById(productId);
+        if (product != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(product);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

@@ -5,6 +5,7 @@ import com.andyhsu.springbootmall.dao.ProductDao;
 import com.andyhsu.springbootmall.dao.UserDao;
 import com.andyhsu.springbootmall.dto.BuyItem;
 import com.andyhsu.springbootmall.dto.CreateOrderRequest;
+import com.andyhsu.springbootmall.dto.OrderQueryParam;
 import com.andyhsu.springbootmall.model.Order;
 import com.andyhsu.springbootmall.model.OrderItem;
 import com.andyhsu.springbootmall.model.Product;
@@ -93,5 +94,26 @@ public class OrderServiceImpl implements OrderService {
         //創建訂單明細
         orderDao.createOrderItems(orderId, orderItemList);
         return orderId;
+    }
+
+    @Override
+    public Integer countOrder(OrderQueryParam orderQueryParam) {
+        return orderDao.countOrder(orderQueryParam);
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParam orderQueryParam) {
+        //查詢所有訂單紀錄
+        List<Order> orderList = orderDao.getOrders(orderQueryParam);
+
+        //要查詢每一筆訂單紀錄的"訂單明細"
+        for (Order order : orderList) {
+            //調用getOrderItemsByOrderId取得每一筆訂單的訂單明細
+            List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(order.getOrderId());
+            //再將獲得的訂單明細set到該筆訂單中，就有完整的訂單json object了
+            //因一整個order訂單會包含orderList，所以要在order中擴充orderList
+            order.setOrderItemList(orderItemList);
+        }
+        return orderList;
     }
 }

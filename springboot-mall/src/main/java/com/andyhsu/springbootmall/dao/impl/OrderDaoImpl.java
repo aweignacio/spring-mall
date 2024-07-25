@@ -1,6 +1,7 @@
 package com.andyhsu.springbootmall.dao.impl;
 
 import com.andyhsu.springbootmall.dao.OrderDao;
+import com.andyhsu.springbootmall.dto.OrderQueryParam;
 import com.andyhsu.springbootmall.model.Order;
 import com.andyhsu.springbootmall.model.OrderItem;
 import com.andyhsu.springbootmall.rowmapper.OrderItemRowMapper;
@@ -21,6 +22,44 @@ import java.util.Map;
 public class OrderDaoImpl implements OrderDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Override
+    public List<Order> getOrders(OrderQueryParam orderQueryParam) {
+        Map<String, Object> map = new HashMap<>();
+        String sql = "SELECT order_id,user_id,total_amount,created_date,last_modified_date FROM `order` WHERE 1=1";
+        //查詢條件
+        if (orderQueryParam.getUserId() != null) {
+            sql = sql + " AND user_id = :userId";
+            map.put("userId", orderQueryParam.getUserId());
+        }
+        //排序，要讓最新一筆訂單顯上在最上面，且不想讓前端去做修改，所以要在Dao寫死，和getProducts有差別，需注意
+        sql = sql + " ORDER BY created_date DESC";
+        //分頁
+        sql = sql + " LIMIT :limit OFFSET :offset";
+        map.put("limit", orderQueryParam.getLimit());
+        map.put("offset", orderQueryParam.getOffset());
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        return orderList;
+
+    }
+
+    @Override
+    public Integer countOrder(OrderQueryParam orderQueryParam) {
+        String sql = "SELECT count(*) FROM `order` WHERE 1=1";
+        Map<String, Object> map = new HashMap<>();
+
+        //查詢條件
+        //查詢訂單總筆數，orderQueryRequest中有userId，必須先確認該userId是否存在
+        if (orderQueryParam.getUserId() != null) {
+            sql = sql + " AND user_id = :userId";
+            map.put("userId", orderQueryParam.getUserId());
+        }
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+        return total;
+
+    }
 
     @Override
     public List<OrderItem> getOrderItemsByOrderId(Integer orderId) {
