@@ -111,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
             //調用getOrderItemsByOrderId取得每一筆訂單的訂單明細
             List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(order.getOrderId());
             //再將獲得的訂單明細set到該筆訂單中，就有完整的訂單json object了
-            //因一整個order訂單會包含orderList，所以要在order中擴充orderList
+            //因一整個order訂單會包含orderItemList，所以要在order中擴充orderItemList
             order.setOrderItemList(orderItemList);
         }
         return orderList;
